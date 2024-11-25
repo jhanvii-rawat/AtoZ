@@ -20,11 +20,6 @@ class User(db.Model, UserMixin):
     fs_uniquifier = db.Column(db.String, unique=True, nullable=False)
     active = db.Column(db.Boolean, default = True) # if True user can log in, if false user can't log in
     roles = db.Relationship('Role', backref = 'bearers', secondary='user_roles')
-    
-   
-
-   
-
 
 # Role Model - for Dfining Roles of the Users
 class Role(db.Model, RoleMixin):
