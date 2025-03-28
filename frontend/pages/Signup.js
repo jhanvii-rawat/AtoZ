@@ -44,6 +44,7 @@ export default {
             });
             if (res.ok) {
                 console.log('Sign Up successful');
+                this.$router.push('/login')
             } else {
                 console.error('Sign Up failed', await res.json());
             }

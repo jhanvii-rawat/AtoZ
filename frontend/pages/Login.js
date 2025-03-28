@@ -31,20 +31,38 @@ export default {
     },
     methods: {
         async submitLogin() {
-            const res = await fetch(location.origin + '/login',
-                {
+            try {
+                const res = await fetch(location.origin + '/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 'email': this.email, 'password': this.password })
-                })
-            if (res.ok) {
-                console.log('Login successful')
-                const data = await res.json()
+                    body: JSON.stringify({ email: this.email, password: this.password })
+                });
 
-                localStorage.setItem('user', JSON.stringify(data))
+                if (res.ok) {
+                    console.log('Login successful');
+                    const data = await res.json();
 
-                this.$store.commit('setUser')
-                this.$router.push('/feed')
+                    // Save user details in local storage
+                    localStorage.setItem('user', JSON.stringify(data));
+
+                    // Commit the user to Vuex store
+                    this.$store.commit('setUser', data);
+
+                    // Redirect based on role
+                    if (data.role === 'admin') {
+                        this.$router.push('/admindashboard');
+                    } 
+                    if (data.role === 'professional') {
+                        this.$router.push('/professional-dashboard');
+                    } 
+                    else {
+                        this.$router.push('/home');
+                    }
+                } else {
+                    console.error('Login failed');
+                }
+            } catch (error) {
+                console.error('Error during login:', error);
             }
         }
     }

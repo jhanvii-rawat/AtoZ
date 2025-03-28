@@ -1,3 +1,4 @@
+from flask import jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_security import UserMixin, RoleMixin
@@ -20,6 +21,8 @@ class User(db.Model, UserMixin):
     fs_uniquifier = db.Column(db.String, unique=True, nullable=False)
     active = db.Column(db.Boolean, default = True) # if True user can log in, if false user can't log in
     roles = db.Relationship('Role', backref = 'bearers', secondary='user_roles')
+    address =db.Column(db.Text)
+    pincode= db.Column(db.Integer)
 
 # Role Model - for Dfining Roles of the Users
 class Role(db.Model, RoleMixin):
@@ -37,6 +40,18 @@ class UserRoles(db.Model):
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
 
 
+# Service Category Model - Defines the categories for services
+class ServiceCategory(db.Model):
+    __tablename__ = 'service_categories'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), unique=True, nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    image_url = db.Column(db.Text, nullable=True)
+    
+    services = db.relationship('Service', backref='category', lazy=True)  # One-to-Many relationship with Service
+
+
 # Service Model - Defines types of services available on the platform
 class Service(db.Model):
     __tablename__ = 'services'
@@ -46,8 +61,9 @@ class Service(db.Model):
     description = db.Column(db.Text, nullable=False)
     base_price = db.Column(db.Float, nullable=False)
     time_required = db.Column(db.Integer, nullable=False)  # Estimated time in minutes
-
+    image_url = db.Column(db.Text, nullable=True)
     
+    category_id = db.Column(db.Integer, db.ForeignKey('service_categories.id'), nullable=False)  # Link to ServiceCategory
 
 # Professional Profile - Additional information specific to Service Professionals
 class ProfessionalProfile(db.Model):
@@ -58,7 +74,9 @@ class ProfessionalProfile(db.Model):
     service_id = db.Column(db.Integer, db.ForeignKey('services.id'), nullable=False)  # Only one service expertise per professional
     experience_years = db.Column(db.Integer, nullable=False)
     description = db.Column(db.Text)
+    profile_status= db.Column(db.String, default= 'Pending')
     is_verified = db.Column(db.Boolean, default=False)  # Admin verification status
+    pincode= db.Column(db.Integer)
 
     user = db.relationship('User', backref=db.backref('professional_profile', uselist=False))
     service = db.relationship('Service', backref='professionals')
@@ -74,6 +92,7 @@ class Document(db.Model):
     document_url = db.Column(db.String(200), nullable=False)  # URL or path to the uploaded document file
     is_verified = db.Column(db.Boolean, default=False)  # Document verification status by admin
     uploaded_at = db.Column(db.DateTime, default=datetime.now)
+    remark = db.Column(db.Text) #remark to be sent by the admin which will be seen by the professional 
 
     user = db.relationship('User', backref='documents')
 
@@ -113,4 +132,5 @@ class Review(db.Model):
     customer = db.relationship('User', foreign_keys=[customer_id], backref='customer_reviews')
     professional = db.relationship('User', foreign_keys=[professional_id], backref='professional_reviews')
 
-    
+
+   

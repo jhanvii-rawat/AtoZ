@@ -11,7 +11,7 @@ class LocalDevelopmentConfig(Config):
     SECURITY_PASSWORD_SALT = 'newrepo123456'
     SECRET_KEY = "newprojectformad2byjhanviirawat"
 
-    SECURITY_TOKEN_AUTHENTICATION_HEADER = 'Token-Token'
+    SECURITY_TOKEN_AUTHENTICATION_HEADER = 'Authentication-Token'
     SECURITY_TOKEN_MAX_AGE = 3600
 
     # cache specific
