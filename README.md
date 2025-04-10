@@ -1,1 +1,1 @@
-A to Z is House Service Application that helps user hire professional for work like elctrician, plumber, A/C service and many more. 
+A to Z is a House Service Application that helps user hire professionals like elctrician, plumber, A/C service and many more. 
